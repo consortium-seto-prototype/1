@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for,flash
+from flask import Flask, render_template, request, redirect, url_for,flash, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from database import db, User, Stamp
@@ -122,6 +122,14 @@ def game():
 def info():
     return render_template('info.html')
 
+@app.route('/spots')
+def get_spots():
+    spots = [
+        {"name": "セブン", "latitude": 35.18421, "longitude": 137.11190, "radius": 20},
+        #{"name": "愛工大", "latitude": 35.1835, "longitude": 137.1130, "radius": 50},
+        #{"name": "浅草寺", "latitude": 35.7148, "longitude": 139.7967, "radius": 400}
+    ]
+    return jsonify(spots)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5001)
