@@ -1,0 +1,80 @@
+
+body {
+    margin: 0;
+    background-color: rgb(255, 245, 230);
+}
+
+/* -------------↓ ヘッダー部分（全画面共通）↓------------- */
+header {
+    position: sticky;
+    top: 0;
+    /* background-color: rgb(255, 245, 230, 0.9); */
+    background-color: rgba(233, 186, 116, 0.9);
+}
+
+.aaa {
+    display: flex;
+    align-items: center;
+}
+
+.h_icon {
+    float: left;
+    margin-left: 5px;
+}
+
+.h_title {
+    padding-left: 10px;
+}
+
+.hb {
+    display: block;
+    margin: 0 auto;
+}   
+
+#g_navi ul {
+    display: flex;
+    margin: 0 auto;
+    padding: 0 3%;
+    width: 94%;
+    max-width: 960px; 
+    /* height: 25px; */
+}
+
+#g_navi li {
+    list-style: none;
+    font-weight: bold;
+}
+    
+#g_navi ul li {
+  flex: 1 0 auto;
+}
+      
+#g_navi ul li a {
+    display: block;
+    padding: 1px 10px;
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+}
+  
+.h_line {
+    background-color: rgb(90, 72, 72);
+    width: 1px;
+    height: 20px;
+    margin-top: 3px;
+}
+
+/* -------------↑ ヘッダー部分（全画面共通）↑------------- */
+
+section {
+    padding: 5px 15px;
+    height: 150vh;
+}
+
+.login {
+    text-align: center;
+}
+
+.regi {
+    text-align: center;
+}
