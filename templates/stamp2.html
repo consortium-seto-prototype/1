@@ -1,58 +1,8 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Stamp</title>
-    <link rel="stylesheet" href="/static/css/stamp.css">
-
-    <script>
-        function confirmLogout() {
-            return confirm("本当にログアウトしますか？");
-        }
-    </script>
-
-</head>
-<body>
-    <header>
-        <div class="aaa">
-            <img class="h_icon" src="{{ url_for('static', filename='images/AIT.jpeg') }}" alt="" width="50" height="50">
-            <h3 class="h_title">愛工大スタンプラリー</h3>
-        </div>
-        <nav id="g_navi">
-            <ul>
-              <li><a href="{{ url_for('info') }}">施設情報</a></li>
-              <span class="h_line"></span>
-              <li><a href="{{ url_for('game') }}">カードゲーム</a></li>
-              <span class="h_line"></span>
-              <li><a href="{{ url_for('logout') }}" onclick="return confirmLogout()">ログアウト</a></li>
-            </ul>
-          </nav>
-    </header>
-
-    <section>
-        <!-- <h2>スタンプラリーの画面です。</h2> -->
-
-        <!-- <form action="{{ url_for('stamp') }}" method="POST">
-            <button type="submit">スタンプを集めた時の処理</button>
-        </form>
-
-        <p>スタンプの合計: {{ total_stamps }}</p>
-
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% for category, message in messages %}
-                <p class="{{ category }}">{{ message }}</p>
-            {% endfor %}
-        {% endwith %} -->
-    <!-- </section> -->
-<!-- </body> -->
-<!-- </html>  -->
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>GPSマップ表示</title>
+    <title></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="stylesheet" href="/static/css/stamp.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -103,22 +53,22 @@
         let stampButton = null; // スタンプボタンの要素
 
         // スポットの座標を取得してマップ上に表示
-        fetch('/spots')
+        fetch('/test_spots')
             .then(response => response.json())
             .then(data => {
-                spots = data;
-                data.forEach(spot => {
-                    let circle = L.circle([spot.latitude, spot.longitude], {
-                        color: 'blue',
-                        fillColor: 'blue',
-                        fillOpacity: 0.3,
-                        radius: spot.radius
-                    }).addTo(map);
+                //-------------------- 配列から指定して座標を取り出したい-----------------------
+                let spots = data[1];
+                
+                let circle = L.circle([spots.latitude, spots.longitude], {
+                    color: 'blue',
+                    fillColor: 'blue',
+                    fillOpacity: 0.3,
+                    radius: spot.radius
+                }).addTo(map);
 
-                    // スポット情報を格納
-                    circle.bindPopup(`${spot.name}`).openOn(map);
-                    //spot.circle = circle;
-                });
+                // スポット情報を格納
+                circle.bindPopup(`${spots.name}`).openOn(map);
+                //spot.circle = circle;
             });
 
         function getLocation() {
@@ -204,19 +154,6 @@
                 alert('スタンプを押しました！');
                 // スタンプ押した後にボタン非表示
                 stampButton.style.display = 'none';
-
-                // fetch("/get_stamp", {
-                //     method: "POST"
-                // })
-                // .then(response => response.json())
-                // .then(data => {
-                //     console.log("Success:", data);
-                //     alert(data.message);
-                // })
-                // .catch(error => {
-                //     console.error("Error:", error);
-                // });
-
             });
 
             document.body.appendChild(stampButton);

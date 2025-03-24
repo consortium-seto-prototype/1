@@ -39,6 +39,7 @@ def home():
             login_user(user)
             flash("ログインしました", "success")
             return redirect(url_for('stamp'))
+            # return redirect(url_for('index'))
         else:
             flash("ユーザ名かパスワードが間違っています。", "danger")
 
@@ -82,6 +83,7 @@ def stamp():
     if request.method == 'POST':
         # # 既存のスタンプを取得（なければ新規作成）
         # stamp = Stamp.query.filter_by(user_id=current_user.id).first()
+        
         if not stamp:
             stamp = Stamp(user_id=current_user.id, stamp_count=1)
             db.session.add(stamp)
@@ -101,6 +103,33 @@ def stamp():
 # @login_required
 # def stamp():
 #     return render_template('stamp.html')
+
+# 取得したスタンプをデータベースに追加する処理（未実装）
+@app.route('/get_stamp', methods=['POST'])
+@login_required
+def get_stamp():
+    # ユーザーのスタンプ情報を取得（なければデフォルト0）
+    stamp = Stamp.query.filter_by(user_id=current_user.id).first()
+    total_stamps = stamp.stamp_count if stamp else 0
+
+    if request.method == 'POST':
+        # # 既存のスタンプを取得（なければ新規作成）
+        # stamp = Stamp.query.filter_by(user_id=current_user.id).first()
+        if not stamp:
+            stamp = Stamp(user_id=current_user.id, stamp_count=1)
+            db.session.add(stamp)
+        else:
+            if stamp.stamp_count < 10:
+                stamp.stamp_count += 1  # スタンプを1つ増やす
+            else:
+                flash("スタンプは10個までです!", "warning")
+                return redirect(url_for('stamp'))
+
+        db.session.commit()
+        flash("スタンプを獲得しました！", "success")
+        return redirect(url_for('stamp2'))
+
+
 
 # カードゲーム画面
 @app.route('/game')
@@ -122,18 +151,30 @@ def game():
 def info():
     return render_template('info.html')
 
-@app.route('/aaa')
+@app.route('/stamp2')
 def index():
-    return render_template('index.html')
+    return render_template('stamp2.html')
 
 @app.route('/spots')
 def get_spots():
     spots = [
-        {"name": "セブン", "latitude": 35.18421, "longitude": 137.11190, "radius": 20},
-        #{"name": "愛工大", "latitude": 35.1835, "longitude": 137.1130, "radius": 50},
-        #{"name": "浅草寺", "latitude": 35.7148, "longitude": 139.7967, "radius": 400}
+        # {"name": "セブン", "latitude": 35.18421, "longitude": 137.11190, "radius": 20},
+        {"name": "14号館", "latitude": 35.184473, "longitude": 137.110925, "radius": 20},
+        # {"name": "愛工大", "latitude": 35.1835, "longitude": 137.1130, "radius": 50},
+        # {"name": "浅草寺", "latitude": 35.7148, "longitude": 139.7967, "radius": 400},
+        # {"name": "テスト用", "latitude": 35.198600, "longitude": 137.093998, "radius": 30}
     ]
     return jsonify(spots)
+
+@app.route('/test_spots')
+def get_test_spots():
+    test_spots = [
+        {"name": "14号館", "latitude": 35.184473, "longitude": 137.110925, "radius": 20},
+        {"name": "セブン", "latitude": 35.18421, "longitude": 137.11190, "radius": 20},
+        {"name": "愛工大", "latitude": 35.1835, "longitude": 137.1130, "radius": 50},
+        {"name": "浅草寺", "latitude": 35.7148, "longitude": 139.7967, "radius": 400}
+    ]
+    return jsonify(test_spots)    
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5001)
