@@ -69,4 +69,8 @@ header {
 section {
     padding: 5px 15px;
     height: 150vh;
-  }
+}
+
+.regi {
+    text-align: center;
+}

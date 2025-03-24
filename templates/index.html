@@ -3,56 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <title>GPSマップ表示</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="/static/css/stamp.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        #map {
-            flex: 1;
-            width: 100%;
-        }
-
-        #controls {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1000;
-        }
-
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            border: none;
-            border-radius: 10px;
-            background: #007BFF;
-            color: white;
-            cursor: pointer;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-        }
-
-        button:active {
-            background: #0056b3;
-        }
-    </style>
+    
 </head>
 <body>
+    <header>
+        <div class="aaa">
+            <img class="h_icon" src="{{ url_for('static', filename='images/AIT.jpeg') }}" alt="" width="50" height="50">
+            <h3 class="h_title">愛工大スタンプラリー</h3>
+        </div>
+        <nav id="g_navi">
+            <ul>
+              <li><a href="{{ url_for('info') }}">施設情報</a></li>
+              <span class="h_line"></span>
+              <li><a href="{{ url_for('game') }}">カードゲーム</a></li>
+              <span class="h_line"></span>
+              <li><a href="{{ url_for('logout') }}" onclick="return confirmLogout()">ログアウト</a></li>
+            </ul>
+          </nav>
+    </header>
 
-    <div id="controls">
+
+
+    <div class="g_button" id="controls">
         <!-- 現在地ピンへ移動ボタン -->
         <button onclick="zoomToCurrentLocation()">現在地ピン</button>
     </div>
