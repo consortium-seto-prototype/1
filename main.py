@@ -241,7 +241,9 @@ def get_stamp():
 
     data = request.get_json()
     stp_num = data.get('stp_num')
-    print("スタンプ番号：", stp_num)
+    latitude = data.get('latitude')
+    longitude = data.get('longitude')
+    print("スタンプ番号：", stp_num, "緯度：", latitude, "経度：", longitude)
 
     if request.method == 'POST':
                 
