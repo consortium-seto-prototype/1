@@ -2,7 +2,7 @@ from flask import Flask, request, render_template, redirect, url_for, flash, jso
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 # from database import db, User, Stamp
-from database import db, User, Spot, Stamp
+from database import db, User, Spot, Stamp, StampRecord
 
 app = Flask(__name__)
 app.secret_key = 'secret_key'
@@ -239,16 +239,28 @@ def get_stamp():
     stamp = Stamp.query.filter_by(user_id=current_user.id).first()
     total_stamps = stamp.stamp_count if stamp else 0
 
-    data = request.get_json()
-    stp_num = data.get('stp_num')
-    latitude = data.get('latitude')
-    longitude = data.get('longitude')
-    print("スタンプ番号：", stp_num, "緯度：", latitude, "経度：", longitude)
-
     if request.method == 'POST':
-                
+        data = request.get_json()
+        stp_num = data.get('stp_num')
+        lat = data.get('latitude')
+        lng = data.get('longitude')
+        print("スタンプ番号：", stp_num, "緯度：", lat, "経度：", lng)        
+
         get_stamp = save_stamp(stp_num)
         print("取得したスタンプ：", get_stamp)
+
+        # 行動データの保存
+        spot = Spot.query.filter_by(order_number=stp_num).first()
+        record = StampRecord(
+            user_id = current_user.id,
+            spot_id = spot.id if spot else None,
+            # entered_at = datetime.utcnow(),
+            lat = lat,
+            lng = lng
+        )
+        db.session.add(record)
+        db.session.commit()
+
         return jsonify({
             "message": "スタンプを獲得しました！",
             "redirect": "/info" + str(get_stamp)
@@ -395,6 +407,26 @@ def test_get_stamp():
         get_stamp = save_stamp(stamp_number)
         total_stamps = stamp.stamp_count if stamp else 0
         info_num = "info" + str(get_stamp)
+
+        # 行動データの保存(位置情報なし)
+        spot = Spot.query.filter_by(order_number=stamp_number).first()
+
+        # すでに同じユーザーがこのスポットに対して記録しているか確認
+        existing_record = StampRecord.query.filter_by(user_id = current_user.id, spot_id = spot.id).first()
+        if existing_record:
+            # return {'message': 'このスポットの記録は既に存在します'}, 200
+            return redirect(url_for(info_num))
+
+        record = StampRecord(
+            user_id = current_user.id,
+            spot_id = spot.id if spot else None,
+            # entered_at = datetime.utcnow(),
+            # lat = lat,
+            # lng = lng
+        )
+        db.session.add(record)
+        db.session.commit()
+
         return redirect(url_for(info_num))
     # ログアウト状態していなければ
     else :
@@ -412,6 +444,26 @@ def test_get_stamp2():
         get_stamp = save_stamp(stamp_number)
         total_stamps = stamp.stamp_count if stamp else 0
         info_num = "info" + str(get_stamp)
+
+        # 行動データの保存(位置情報なし)
+        spot = Spot.query.filter_by(order_number=stamp_number).first()
+
+        # すでに同じユーザーがこのスポットに対して記録しているか確認
+        existing_record = StampRecord.query.filter_by(user_id = current_user.id, spot_id = spot.id).first()
+        if existing_record:
+            # return {'message': 'このスポットの記録は既に存在します'}, 200
+            return redirect(url_for(info_num))
+
+        record = StampRecord(
+            user_id = current_user.id,
+            spot_id = spot.id if spot else None,
+            # entered_at = datetime.utcnow(),
+            # lat = lat,
+            # lng = lng
+        )
+        db.session.add(record)
+        db.session.commit()
+
         return redirect(url_for(info_num))
     else :
         stamp_number = 2
@@ -428,6 +480,26 @@ def test_get_stamp3():
         get_stamp = save_stamp(stamp_number)
         total_stamps = stamp.stamp_count if stamp else 0
         info_num = "info" + str(get_stamp)
+
+        # 行動データの保存(位置情報なし)
+        spot = Spot.query.filter_by(order_number=stamp_number).first()
+
+        # すでに同じユーザーがこのスポットに対して記録しているか確認
+        existing_record = StampRecord.query.filter_by(user_id = current_user.id, spot_id = spot.id).first()
+        if existing_record:
+            # return {'message': 'このスポットの記録は既に存在します'}, 200
+            return redirect(url_for(info_num))
+
+        record = StampRecord(
+            user_id = current_user.id,
+            spot_id = spot.id if spot else None,
+            # entered_at = datetime.utcnow(),
+            # lat = lat,
+            # lng = lng
+        )
+        db.session.add(record)
+        db.session.commit()
+
         return redirect(url_for(info_num))
     else :
         stamp_number = 3
@@ -444,41 +516,29 @@ def test_get_stamp4():
         get_stamp = save_stamp(stamp_number)
         total_stamps = stamp.stamp_count if stamp else 0
         info_num = "info" + str(get_stamp)
+
+        # 行動データの保存(位置情報なし)
+        spot = Spot.query.filter_by(order_number=stamp_number).first()
+
+        # すでに同じユーザーがこのスポットに対して記録しているか確認
+        existing_record = StampRecord.query.filter_by(user_id = current_user.id, spot_id = spot.id).first()
+        if existing_record:
+            # return {'message': 'このスポットの記録は既に存在します'}, 200
+            return redirect(url_for(info_num))
+
+        record = StampRecord(
+            user_id = current_user.id,
+            spot_id = spot.id if spot else None,
+            # entered_at = datetime.utcnow(),
+            # lat = lat,
+            # lng = lng
+        )
+        db.session.add(record)
+        db.session.commit()
+
         return redirect(url_for(info_num))
     else :
         stamp_number = 4
-        print("ログインしていません。", stamp_number)
-        return redirect(url_for('home2', stp_num=stamp_number))
-
-@app.route('/test_get_stamp5', methods=['GET'])
-def test_get_stamp5():
-    if current_user.is_authenticated:
-        stamp = Stamp.query.filter_by(user_id=current_user.id).first()
-        total_stamps = stamp.stamp_count if stamp else 0
-        stamp_number = 5
-
-        get_stamp = save_stamp(stamp_number)
-        total_stamps = stamp.stamp_count if stamp else 0
-        info_num = "info" + str(get_stamp)
-        return redirect(url_for(info_num))
-    else :
-        stamp_number = 5
-        print("ログインしていません。", stamp_number)
-        return redirect(url_for('home2', stp_num=stamp_number))
-
-@app.route('/test_get_stamp6', methods=['GET'])
-def test_get_stamp6():
-    if current_user.is_authenticated:
-        stamp = Stamp.query.filter_by(user_id=current_user.id).first()
-        total_stamps = stamp.stamp_count if stamp else 0
-        stamp_number = 6
-
-        get_stamp = save_stamp(stamp_number)
-        total_stamps = stamp.stamp_count if stamp else 0
-        info_num = "info" + str(get_stamp)
-        return redirect(url_for(info_num))
-    else :
-        stamp_number = 6
         print("ログインしていません。", stamp_number)
         return redirect(url_for('home2', stp_num=stamp_number))
 
