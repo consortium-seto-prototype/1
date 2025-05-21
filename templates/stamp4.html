@@ -352,25 +352,34 @@
                 // Flaskから渡されたstp_numをjsの変数として使う
                 const stpNum = {{ stp_num|tojson }};
 
-                fetch("/get_stamp", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ stp_num: stpNum })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Success:", data);
-                    alert(data.message);
-                    if (data.redirect) {
-                        window.location.href = data.redirect; // 次の画面に遷移
-                    }
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                    alert("エラーが発生しました");
-                });
+                // 現在の位置情報が取得済みであるか確認
+                if (prevLat !== null && prevLng !== null) {
+                    fetch("/get_stamp", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ 
+                            stp_num: stpNum,
+                            latitude: prevLat,
+                            longitude: prevLng
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("Success:", data);
+                        alert(data.message);
+                        if (data.redirect) {
+                            window.location.href = data.redirect;
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                        alert("エラーが発生しました");
+                    });
+                } else {
+                    alert("現在地が取得できませんでした。もう一度お試しください。");
+                }
             });
 
             document.body.appendChild(stampButton);
