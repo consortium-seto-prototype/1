@@ -250,7 +250,7 @@ def get_stamp():
         print("lat:", lat)
         print("lng:", lng)
                 
-        get_stamp = save_stamp(stp_num, lat, lng)
+        get_stamp = save_stamp(stp_num)
         print("取得したスタンプ：", get_stamp)
 
         # 行動データの保存
@@ -258,12 +258,12 @@ def get_stamp():
 
         record = StampRecord(
             user_id = current_user.id,
-            spot_id=spot.id if spot else None,
+            spot_id = spot.id if spot else None,
             # entered_at = datetime.utcnow(),
             lat = lat,
             lng = lng
         )
-        
+
         db.session.add(record)
         db.session.commit()
 
