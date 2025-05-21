@@ -40,20 +40,6 @@ class Spot(db.Model):
 class Stamp(db.Model):
     __tablename__ = 'stamp'
 
-    # id = db.Column(db.Integer, primary_key=True)
-    # user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    # spot_id = db.Column(db.Integer, db.ForeignKey('spot.id'), nullable=True)
-
-    # entered_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    # exited_at = db.Column(db.DateTime)  
-
-    # lat = db.Column(db.Float, nullable=True)
-    # lng = db.Column(db.Float, nullable=True)
-
-    # user = db.relationship('User', backref=db.backref('stamps', lazy=True))
-    # spot = db.relationship('Spot', backref=db.backref('stamps', lazy=True))
-
-    # これまでのやつ
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     stamp_count = db.Column(db.Integer, nullable=False, default=0)
@@ -70,6 +56,7 @@ class Stamp(db.Model):
 
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+# ユーザの行動データ記録用
 class StampRecord(db.Model):
     __tablename__ = 'stampsrecord'
 
@@ -77,7 +64,7 @@ class StampRecord(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     spot_id = db.Column(db.Integer, db.ForeignKey('spot.id'), nullable=True)
 
-    entered_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    entered_at = db.Column(db.DateTime)
     exited_at = db.Column(db.DateTime)  
 
     lat = db.Column(db.Float, nullable=True)
