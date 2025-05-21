@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ユーザー登録</title>
+    <link rel="stylesheet" href="/static/css/register.css">
+</head>
+<body>
+    <header>
+        <div class="aaa">
+            <img class="h_icon" src="{{ url_for('static', filename='images/AIT.jpeg') }}" alt="" width="50" height="50">
+            <div class="aaaa">
+                <h3 class="h_title">愛工大スタンプラリー</h3>
+            </div>
+        </div>
+        <!-- <nav id="g_navi">
+            <ul>
+              <li><a href="{{ url_for('info') }}">施設情報</a></li>
+              <span class="h_line"></span>
+              <li><a href="{{ url_for('game') }}">カードゲーム</a></li>
+              <span class="h_line"></span>
+              <li><a href="{{ url_for('logout') }}">ログアウト</a></li>
+            </ul>
+        </nav> -->
+    </header>
+
+
+    <section>
+        <h1>ユーザー登録</h1>
+        <form class="regi" method="POST">
+            <input type="text" name="name" placeholder="ユーザー名" required>
+            <input type="password" name="password" placeholder="パスワード" required>
+            <button type="submit">登録</button>
+        </form>
+        <p class="regi"><a href="{{ url_for('home') }}">ログインはこちら</a></p>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <p class="{{ category }}">{{ message }}</p>
+            {% endfor %}
+        {% endwith %}
+    </section>
+</body>
+</html>

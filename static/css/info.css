@@ -1,81 +1,29 @@
 
-body {
-    margin: 0;
-    background-color: rgb(255, 245, 230);
+.n_btn {
+    text-align: right;
+    height: 50px;
 }
 
-/* -------------↓ ヘッダー部分（全画面共通）↓------------- */
-header {
-    position: sticky;
-    top: 0;
-    /* background-color: rgb(255, 245, 230, 0.9); */
-    background-color: rgba(233, 186, 116, 0.9);
-}
-
-.aaa {
-    display: flex;
-    align-items: center;
-}
-
-.h_icon {
-    float: left;
-    margin-left: 5px;
-}
-
-.h_title {
-    padding-left: 10px;
-}
-
-.hb {
-    display: block;
-    margin: 0 auto;
-}   
-
-#g_navi ul {
-    display: flex;
-    margin: 0 auto;
-    padding: 0 3%;
-    width: 94%;
-    max-width: 960px; 
-    /* height: 25px; */
-}
-
-#g_navi li {
-    list-style: none;
-    font-weight: bold;
-}
+.next_button {
+    padding: 8px;
     
-#g_navi ul li {
-  flex: 1 0 auto;
-}
-      
-#g_navi ul li a {
-    display: block;
-    padding: 1px 10px;
-    color: #fff;
-    text-align: center;
+    margin-right: 20px;
+
     text-decoration: none;
-}
-  
-.h_line {
-    background-color: rgb(90, 72, 72);
-    width: 1px;
-    height: 20px;
-    margin-top: 3px;
-}
+    color: white;
+    background-color: rgba(74, 94, 247, 0.9);
+    border: black;
+    border-radius: 10px;
 
-/* -------------↑ ヘッダー部分（全画面共通）↑------------- */
-
-/* 画面全体にスペースを空ける */
-section {
-    padding: 5px 15px;
-    height: 150vh;
 }
 
 
 .title_area {
     /* background-color: aqua; */
-    height: 70px;
+    /* height: 70px; */
+    /* height: 90px; */
+    /* width: 80%; */
+    margin: 0 auto;
 }
 
 .t_name {
@@ -84,7 +32,7 @@ section {
 }
 
 .t_box {
-    width: 80%;
+    width: 95%;
     margin: 0 auto;
     height: 30px;
 }
@@ -102,14 +50,27 @@ section {
 
 .img_area {
     margin-top: 10px;
-    /* background-color: #e64a4a; */
-    /* height: 300px; */
     text-align: center;
+
+    /* height: 500px;
+    width: 500px;
+    position: relative; */
 }
 
 .img {
     max-width: 700px;
-    width: 100%;
+    width: 90%;
+    /* position: absolute; */
+}
+
+
+.trump_img {
+    max-width: 400px;
+    width: 80%;
+}
+
+.space_area {
+    height: 100px;
 }
 
 .text_area {
@@ -183,4 +144,10 @@ section {
     margin-top: 5px;
     margin-bottom: 5px;
     margin-left: 10px;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
 }

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>愛和食堂</title>
+    <link rel="stylesheet" href="/static/css/info.css">
+
+    <script>
+        function confirmLogout() {
+            return confirm("本当にログアウトしますか？");
+        }
+
+        $(function() {
+	        var headerHeight = $('header').outerHeight(),
+		        startPos = 0;
+	        $(window).on('load scroll', function() {
+                var scrollPos = $(this).scrollTop();
+                // if ( scrollPos > startPos && scrollPos > headerHeight ) {
+                if ( scrollPos > startPos) {
+                    $('header').css('top', '-' + headerHeight + 'px');
+                } else {
+                    $('header').css('top', '0');
+                }
+                startPos = scrollPos;
+            });
+        });	
+    </script>
+
+</head>
+<body>
+    <header>
+        <div class="aaa">
+            <img class="h_icon" src="{{ url_for('static', filename='images/AIT.jpeg') }}" alt="" width="50" height="50">
+            <h3 class="h_title">愛工大スタンプラリー</h3>
+            <a class="logout" href="{{ url_for('logout') }}" onclick="return confirmLogout()">ログアウト</a>
+        </div>
+        <nav id="g_navi">
+            <ul>
+                <li><a href="{{ url_for('stamp') }}">スタンプラリー</a></li>
+                <span class="h_line"></span>
+                <li><a href="{{ url_for('info_home') }}">施設情報</a></li>
+                <span class="h_line"></span>
+                <li><a href="{{ url_for('game') }}">カードゲーム</a></li>
+            </ul>
+          </nav>
+    </header>
+
+
+    <section>
+        <!-- <h2>大学の情報を表示する画面です。</h2> -->
+
+        <!-- <a class="next_button" href="{{ url_for('stamp') }}">スタンプラリー画面に戻る→</a> -->
+
+        {% if total_stamps < 10 %}
+            <a class="next_button" href="{{ url_for('stamp') }}">次のスタンプを取る→</a>
+        {% endif %}
+
+        {% if total_stamps == 10 %}
+            <a class="next_button" href="{{ url_for('stamp') }}">スタンプラリー画面に戻る→</a>
+        {% endif %}
+
+        <div class="title_area">
+            <h2 class="t_name">愛和食堂</h2>
+            <div class="t_box">
+                <div class="t_line"></div>
+                <p class="t_amens">🤤食事</p>
+            </div>
+        </div>
+
+        <div class="img_area">
+            <img class="img" src="{{ url_for('static', filename='images/info/aiwa.jpg') }}" alt="">
+        </div>
+
+        <div class="text_area">
+            <p class="t_a">愛和会館1階にある約500席を有する広々とした食堂です。</p>
+            <p class="t_a">メニューには、定食や丼物、カレーなどがあり、日替わり麺なども提供されています。学生や教職員にとって、手軽に栄養バランスの取れた食事が取れる場所として親しまれています。</p>
+        </div>
+
+        <div class="info_area">
+            <div class="info_name">
+                <div class="i_line"></div>
+                <h3 class="i_textname">施設情報</h3>
+                <div class="i_line"></div>
+            </div>
+
+            <div class="infomation">
+
+                <div class="i_line2"></div>
+                <div class="i_t_area">
+                    <div class="i_title">
+                        <p class="i_text">営業時間</p>
+                    </div>
+                    <div class="i_info">
+                        <p class="i_text">月、火、水、木、金</p>
+                        <p class="i_text">11:00 ~ 14:00</p>
+                    </div>
+                </div>
+
+                <div class="i_line2"></div>
+                <div class="i_t_area">
+                    <div class="i_title">
+                        <p class="i_text">電話番号</p>
+                    </div>
+                    <div class="i_info">
+                        <p class="i_text">000-0000-0000</p>
+                    </div>
+                </div>
+
+                <div class="i_line2"></div>
+            </div>
+        </div>
+
+    </section>
+
+</body>
+</html>

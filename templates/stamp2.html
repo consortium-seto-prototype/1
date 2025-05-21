@@ -1,32 +1,42 @@
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title></title>
+    <title>スタンプ1</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="stylesheet" href="/static/css/stamp.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    
+    <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css"
+    />
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.min.js"></script>
 </head>
 <body>
     <header>
         <div class="aaa">
             <img class="h_icon" src="{{ url_for('static', filename='images/AIT.jpeg') }}" alt="" width="50" height="50">
             <h3 class="h_title">愛工大スタンプラリー</h3>
+            <a class="logout btn btn--orange btn--radius" href="{{ url_for('logout') }}" onclick="return confirmLogout()">ログアウト</a>
         </div>
         <nav id="g_navi">
             <ul>
-              <li><a href="{{ url_for('info') }}">施設情報</a></li>
-              <span class="h_line"></span>
-              <li><a href="{{ url_for('game') }}">カードゲーム</a></li>
-              <span class="h_line"></span>
-              <li><a href="{{ url_for('logout') }}" onclick="return confirmLogout()">ログアウト</a></li>
+                <li><a href="{{ url_for('stamp') }}">スタンプラリー</a></li>
+                <span class="h_line"></span>
+                <li><a href="{{ url_for('info_home') }}">施設情報</a></li>
+                <span class="h_line"></span>
+                <li><a href="{{ url_for('game') }}">カードゲーム</a></li>
             </ul>
           </nav>
     </header>
 
-
+    <!-- <section>
+        <form method="POST">
+            <button class="" type="submit">スタンプラリー獲得</button>
+        </form>
+    </section> -->
 
     <div class="g_button" id="controls">
         <!-- 現在地ピンへ移動ボタン -->
@@ -36,41 +46,54 @@
     <div id="map"></div>
 
     <script>
-        let map = L.map('map', {
-            center: [35.1839, 137.1156], // 初期位置（愛工大）
-            zoom: 13,
-        });
+        function confirmLogout() {
+            return confirm("本当にログアウトしますか？");
+        }
 
-        // OpenStreetMapのタイルを設定
+        const map = L.map('map').setView([35.18421, 137.11190], 17); //初期位置
+
+        //航空写真タイル(古いよ)
+        // L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg', {
+        //     attribution: "<a href='https://maps.gsi.go.jp/development/ichiran.html' target='_blank'>地理院タイル</a>",
+        //     maxZoom: 18.5
+        // }).addTo(map);
+
+        //地図絵タイル
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
+            maxZoom: 18.5,
         }).addTo(map);
 
-        let currentMarker = null; // 現在地のマーカーを格納
-        let isFirstPosition = true; // 最初の位置取得かどうか
+        let currentMarker = null;// 現在地のマーカーを格納
+        let isFirstPosition = true; // 最初の位置取得かどうか 
         let shouldZoomToCurrentLocation = false; // ズームするかどうかのフラグ
         let spots = []; // スポット情報を格納
         let stampButton = null; // スタンプボタンの要素
+        let keepCenter = false; // 現在地を中央に固定するかどうかのフラグ
+
+        // 現在地と前回の座標を格納
+        let prevLat = null;
+        let prevLng = null;
+        let routingControl = null;
 
         // スポットの座標を取得してマップ上に表示
-        fetch('/test_spots')
+        fetch('/spots2')
             .then(response => response.json())
             .then(data => {
-                //-------------------- 配列から指定して座標を取り出したい-----------------------
-                let spots = data[1];
-                
-                let circle = L.circle([spots.latitude, spots.longitude], {
-                    color: 'blue',
-                    fillColor: 'blue',
-                    fillOpacity: 0.3,
-                    radius: spot.radius
-                }).addTo(map);
+                spots = data;
+                data.forEach(spot => {
+                    let icon = L.icon({
+                        iconUrl: 'static/images/stamp/img3.png',  // 画像のURL（適宜変更）
+                        iconSize: [60, 75],         // アイコンのサイズ
+                        iconAnchor: [30, 40],       // アイコンの基準点（中央にしたい場合）
+                        popupAnchor: [0, -20]       // ポップアップの位置調整
+                    });
 
-                // スポット情報を格納
-                circle.bindPopup(`${spots.name}`).openOn(map);
-                //spot.circle = circle;
+                    let marker = L.marker([spot.latitude, spot.longitude], { icon: icon }).addTo(map);
+                    //marker.bindPopup(`${spot.name}`, { autoClose: false }).openPopup();
+                });
             });
 
+        //現在地を取得
         function getLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(updatePosition, showError, {
@@ -83,24 +106,66 @@
             }
         }
 
+        //現在地ピン
+        var customIcon = L.icon({
+            iconUrl: 'static/images/stamp/img.png',
+            //iconUrl: 'static/images/img4_1.webp', // ここにダウンロードした画像のパスを指定
+            iconSize: [70, 70], // アイコンのサイズ（ピクセル単位）
+            iconAnchor: [19, 38], // アイコンのアンカー位置（アイコンの中心を基準としたオフセット）
+            popupAnchor: [0, -38] // ポップアップの位置調整（ポップアップの先端を基準としたオフセット）
+        });
+
+
+        // 現在地を取得し、ズーム
+        function zoomToCurrentLocation() {
+            shouldZoomToCurrentLocation = true;
+            keepCenter = true;  // 中心固定を有効化
+            getLocation();// 現在地取得を実行
+        }
+
+        map.on('dragstart', function() {
+            keepCenter = false; // 地図を操作したら中心固定を解除
+        });
+
+
         function updatePosition(position) {
             let lat = position.coords.latitude;
             let lng = position.coords.longitude;
-
+            
             // 初回: 新しいマーカーを作成
             if (!currentMarker) {
-                currentMarker = L.marker([lat, lng]).addTo(map)
-                    .bindPopup("現在地").openPopup();
+                currentMarker = L.marker([lat, lng], {icon: customIcon}).addTo(map)
+                    //.bindPopup("現在地",{autoClose:false}).openPopup();
             } else {
                 // 2回目以降: マーカーの位置を更新
                 currentMarker.setLatLng([lat, lng]);
             }
 
-            // 3秒ごとの位置更新時はズームしない
-            if (shouldZoomToCurrentLocation) {
-                map.setView([lat, lng], 15);
-                shouldZoomToCurrentLocation = false; // ズーム後はフラグをリセット
+            if (shouldZoomToCurrentLocation || keepCenter) {
+                map.setView([lat, lng], 18); // 現在地ピンを画面中心にする
+                shouldZoomToCurrentLocation = false;
             }
+
+            // ○秒ごとの位置更新時はズームしない
+            if (shouldZoomToCurrentLocation) {
+                map.setView([lat, lng], 18); //現在地ピンボタンを押した時にズーム
+                shouldZoomToCurrentLocation = false;
+            }
+
+            // ルーティングマシンを現在地から目的地に設定（初回のみ）
+            if (!routingControl) {
+                setupRoutingFromCurrentLocation(lat, lng);
+            } else {
+                // ルートのウェイポイントだけ更新
+                routingControl.setWaypoints([
+                    L.latLng(lat, lng),
+                    L.latLng(35.18421, 137.11190) // ルーティングマシンの目的地
+                ]);
+            }
+
+            // 現在の座標を保存
+            prevLat = lat;
+            prevLng = lng;
 
             // スポットとの距離を計算してスタンプボタンを表示
             checkSpotDistance(lat, lng);
@@ -121,8 +186,8 @@
                 }
             });
 
-            // 最寄りのスポットとの距離が50m以内になった場合、スタンプボタンを表示
-            if (distanceToSpot <= 20) {
+            // 最寄りのスポットとの距離が○m以内になった場合、スタンプボタンを表示
+            if (distanceToSpot <= 30) {
                 if (!stampButton) {
                     createStampButton();
                 }
@@ -132,6 +197,135 @@
                 }
             }
         }
+
+
+        // ルーティングマシンを設定する関数（現在地 → 目的地）
+        function setupRoutingFromCurrentLocation(lat, lng) {
+            //const destination = [35.18368, 137.11087]; // 目的地の座標（キャンパス入口など）
+            const destination = [35.18421, 137.11190]; //目的地
+        
+            routingControl = L.Routing.control({
+                waypoints: [
+                    L.latLng(lat, lng),  // 現在地（スタート地点）
+                    L.latLng(destination[0], destination[1])  // 目的地
+                ],
+                router: L.Routing.osrmv1({
+                    profile: 'foot' // 'driving', 'cycling', 'foot' から選択
+                }),
+                routeWhileDragging: false,
+                createMarker: function() { return null; }, // マーカー非表示
+                fitSelectedRoutes: false, // ルートで自動的にズームしない
+                show: false, // ルート案内パネルを非表示にする
+            }).addTo(map);
+
+
+            // ポリライン（歩行者ルート）の座標
+            let walkingRouteLatLngs = [
+                //[35.19899, 137.10190],
+                //[35.19932, 137.10199],
+                //[35.18368, 137.11091],  // キャンパス入口
+                //[35.18381, 137.11238],  // 校舎A
+                //[35.18398, 137.11236],  // 校舎B
+                //[35.18398, 137.11271],
+                //[35.18430, 137.11272]   // 目的地
+            ];
+
+            // ポリラインオブジェクトを保存
+            let walkingRoute = L.polyline(walkingRouteLatLngs, {
+                color: 'blue',
+                weight: 4,
+                opacity: 0.7
+            }).addTo(map);
+
+            // 近づいたとみなす距離（メートル）
+            const proximityDistance = 10;
+
+            // 現在地の更新時にポリラインを動的に消去
+            function updatePosition(position) {
+                let lat = position.coords.latitude;
+                let lng = position.coords.longitude;
+
+                // 現在地マーカーを表示
+                if (!currentMarker) {
+                    currentMarker = L.marker([lat, lng], {icon: customIcon}).addTo(map)
+                        .bindPopup("現在地",{autoClose:false}).openPopup();
+                } else {
+                    currentMarker.setLatLng([lat, lng]);
+                }
+
+                // ポリラインの消去処理
+                removePassedPolyline(lat, lng);
+
+                // ルーティングマシンを更新（現在地 → 目的地）
+                updateRouting(lat, lng);
+            }
+
+            // ポリライン（歩行者ルート）を動的に消去する関数
+            function removePassedPolyline(lat, lng) {
+                if (walkingRouteLatLngs.length === 0) return;
+
+                let userLatLng = L.latLng(lat, lng);
+
+                // 現在地に最も近いポリライン上の点を探す
+                for (let i = 0; i < walkingRouteLatLngs.length; i++) {
+                    const point = L.latLng(walkingRouteLatLngs[i]);
+                    const distance = userLatLng.distanceTo(point);
+
+                    if (distance <= proximityDistance) {
+                        // 近づいた部分までポリラインを消去
+                        walkingRouteLatLngs.splice(0, i + 1);
+                        updatePolyline();
+                        break;
+                    }
+                }
+            }
+
+            // ポリラインを再描画
+            function updatePolyline() {
+                if (walkingRoute) {
+                    map.removeLayer(walkingRoute);
+                }
+
+                if (walkingRouteLatLngs.length > 0) {
+                    walkingRoute = L.polyline(walkingRouteLatLngs, {
+                        color: 'blue',
+                        weight: 4,
+                        opacity: 0.7
+                    }).addTo(map);
+                }
+            }
+
+
+            // ポリラインの距離を測定
+            function calculatePolylineDistance(polyline) {
+                let distance = 0;
+                const latlngs = polyline.getLatLngs();
+        
+                for (let i = 0; i < latlngs.length - 1; i++) {
+                    const pointA = latlngs[i];
+                    const pointB = latlngs[i + 1];
+                    distance += map.distance(pointA, pointB); // 各区間の距離を加算
+                }
+
+                return distance;
+            }
+
+
+            // ルーティングマシンの距離測定
+            routingControl.on('routesfound', function(e) {
+                const route = e.routes[0];
+                const routingDistance = route.summary.totalDistance; // ルーティングマシンの距離
+                console.log("ルーティングマシンの距離：", routingDistance, "m");
+
+                // 歩行者ルートの距離測定
+                const walkingDistance = calculatePolylineDistance(walkingRoute);
+                console.log("歩行者ルートの距離：", walkingDistance.toFixed(2), "m");
+
+                // 両方の合計距離を表示
+                const totalDistance = routingDistance + walkingDistance;
+                console.log("目的地まであと：", totalDistance.toFixed(2), "m");
+            });
+    }
 
         // スタンプボタンを作成
         function createStampButton() {
@@ -151,19 +345,38 @@
             stampButton.style.zIndex = '1000';
 
             stampButton.addEventListener('click', function() {
-                alert('スタンプを押しました！');
+                // alert('スタンプを押しました！');
                 // スタンプ押した後にボタン非表示
                 stampButton.style.display = 'none';
+
+                // Flaskから渡されたstp_numをjsの変数として使う
+                const stpNum = {{ stp_num|tojson }};
+
+                fetch("/get_stamp", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ stp_num: stpNum })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Success:", data);
+                    alert(data.message);
+                    if (data.redirect) {
+                        window.location.href = data.redirect; // 次の画面に遷移
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("エラーが発生しました");
+                });
             });
 
             document.body.appendChild(stampButton);
         }
 
-        // 現在地を取得し、ズーム
-        function zoomToCurrentLocation() {
-            shouldZoomToCurrentLocation = true;
-            getLocation(); // 現在地取得を実行
-        }
+        
 
         function showError(error) {
             switch (error.code) {
@@ -181,11 +394,85 @@
                     break;
             }
         }
+        // ○秒ごとに現在地を取得
+        setInterval(getLocation, 2000);
 
-        // 3秒ごとに現在地を取得
-        setInterval(getLocation, 3000);
+        // let videoStream = null;
 
-    </script>
+        // function startQRScan() {
+        //     let overlay = document.getElementById('qrOverlay');
+        //     overlay.style.display = 'flex';
+
+        //     navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+        //         .then(stream => {
+        //             videoStream = stream;
+        //             let video = document.getElementById('video');
+        //             video.srcObject = stream;
+        //             scanQRCode(video);
+        //         })
+        //         .catch(err => {
+        //             alert("カメラのアクセスが拒否されました。HTTPS環境で試してください。");
+        //             stopQRScan();
+        //         });
+        // }
+
+        // function scanQRCode(video) {
+        //     let canvas = document.createElement("canvas");
+        //     let context = canvas.getContext("2d");
+
+        //     function scan() {
+        //         if (video.readyState === video.HAVE_ENOUGH_DATA) {
+        //             canvas.width = video.videoWidth;
+        //             canvas.height = video.videoHeight;
+        //             context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        //             let imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+        //             let code = jsQR(imageData.data, imageData.width, imageData.height);
+
+        //             if (code) {
+        //                 alert("QRコードを検出しました: " + code.data);
+        //                 stopQRScan();
+        //                 return;
+        //             }
+        //         }
+        //         requestAnimationFrame(scan);
+        //     }
+        //     scan();
+        // }
+
+        // function stopQRScan() {
+        //     let overlay = document.getElementById('qrOverlay');
+        //     overlay.style.display = 'none';
+
+        //     if (videoStream) {
+        //         let tracks = videoStream.getTracks();
+        //         tracks.forEach(track => track.stop());
+        //     }
+        // }
+
+        // function navigateToSpotDetail(spot) {
+        //     let url = `spot_detail.html?name=${encodeURIComponent(spot.name)}&description=${encodeURIComponent(spot.description)}`;
+        //     window.location.href = url;
+        // }
+
+        // // スタンプを押したとき
+        // stampButton.addEventListener('click', function() {
+        //     navigateToSpotDetail(nearestSpot);
+        // });
+
+        // // QRコードスキャン時の処理
+        // if (code) {
+        //     let scannedSpot = spots.find(s => s.qrCode === code.data);
+        //     if (scannedSpot) {
+        //         navigateToSpotDetail(scannedSpot);
+        //     } else {
+        //         alert("不明なQRコードです。");
+        //     }
+        // }
+
+        
+
+
+    </script>   
 </body>
 </html>
 

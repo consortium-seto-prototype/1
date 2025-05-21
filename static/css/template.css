@@ -1,0 +1,108 @@
+/* -----------------------↓ 画面全体の設定 ↓----------------------- */
+body {
+    margin: 0;
+    background-color: rgb(255, 245, 230);
+    font-family: "Helvetica", "ヒラギノ丸ゴ ProN";
+}
+
+section {
+    /* 要素を少し内側にする */
+    padding: 5px 15px;
+}
+/* -----------------------↑ 画面全体の設定 ↑----------------------- */
+
+
+/* -------------↓ ヘッダー部分（ログイン画面以外は共通）↓------------- */
+header {
+    position: sticky;
+    top: 0;
+    /* background-color: rgba(44, 186, 146, 0.9); */
+    /* background-color: rgba(233, 186, 116, 0.9); */
+    background-color: rgba(74, 94, 247, 0.9);
+    color: #fff;
+}
+
+.aaa {
+    /* display: flex; */
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+}
+
+.h_icon {
+    float: left;
+    margin-left: 5px;
+    border-radius: 20px;
+}
+
+.h_title {
+    padding-left: 10px;
+}
+
+.hb {
+    display: block;
+    margin: 0 auto;
+}   
+
+#g_navi ul {
+    display: flex;
+    margin: 0 auto;
+    padding: 0 3%;
+    width: 94%;
+    max-width: 960px; 
+    /* height: 25px; */
+}
+
+#g_navi li {
+    list-style: none;
+    font-weight: bold;
+}
+    
+#g_navi ul li {
+  flex: 1 0 auto;
+}
+      
+#g_navi ul li a {
+    display: block;
+    padding: 1px 10px;
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+}
+  
+.h_line {
+    /* background-color: rgb(90, 72, 72); */
+    background-color: rgb(160, 222, 252);
+    width: 1px;
+    height: 20px;
+    margin-top: 3px;
+}
+
+.logout {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    margin-right: 5px;
+    text-decoration: none;
+    height: 30px;
+    width: 90px;
+}
+
+.btn--orange,
+a.btn--orange {
+    color: black;
+    background-color: #f6f4f3;
+}
+.btn--orange:hover,
+a.btn--orange:hover {
+    color: black;
+    background: #e5e3e2;
+}
+
+a.btn--radius {
+    border-radius: 100vh;
+}
+
+/* -------------↑ ヘッダー部分（全画面共通）↑------------- */

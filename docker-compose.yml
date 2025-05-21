@@ -1,0 +1,14 @@
+version: '3'
+services:
+  web:
+    build: .
+    ports:
+      - "80:80"
+      - "443:443"  # SSL用ポート
+    volumes:
+      - .:/app
+      - ./server.crt:/etc/ssl/server.crt  # 証明書のマウント
+      - ./server.key:/etc/ssl/server.key  # 秘密鍵のマウント
+      - ./apache/ssl.conf:/etc/apache2/sites-available/ssl.conf  # SSL設定ファイル
+    restart: always
+    command: bash -c "a2ensite ssl && apache2ctl -D FOREGROUND"  # SSL設定を有効化してApacheを起動

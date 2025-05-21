@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>スタンプラリー完走</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="/static/css/stamp.css">
+    <!-- <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" /> -->
+    <!-- <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script> -->
+    
+    <script>
+        function confirmLogout() {
+            return confirm("本当にログアウトしますか？");
+        }
+    </script>
+
+</head>
+<body>
+    <header>
+        <div class="aaa">
+            <img class="h_icon" src="{{ url_for('static', filename='images/AIT.jpeg') }}" alt="" width="50" height="50">
+            <h3 class="h_title">愛工大スタンプラリー</h3>
+            <a class="logout" href="{{ url_for('logout') }}" onclick="return confirmLogout()">ログアウト</a>
+        </div>
+        <nav id="g_navi">
+            <ul>
+              <li><a href="{{ url_for('stamp') }}">スタンプラリー</a></li>
+              <span class="h_line"></span>
+              <li><a href="{{ url_for('info_home') }}">施設情報</a></li>
+              <span class="h_line"></span>
+              <li><a href="{{ url_for('game') }}">カードゲーム</a></li>
+              <!-- <span class="h_line"></span> -->
+              <!-- <li><a href="{{ url_for('logout') }}" onclick="return confirmLogout()">ログアウト</a></li> -->
+            </ul>
+          </nav>
+    </header>
+
+    <section class="section">
+        <h2 class="kan">スタンプを10個集めました。<br>カードゲームをプレイしよう!</h2>
+    </section>
+
+</body>
+</html>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>GPSマップ表示 + QRコードスキャン</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+    
+
+    <!-- plugin 
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.icon-pulse/dist/L.Icon.Pulse.css" />
+    <script src="https://unpkg.com/leaflet.icon-pulse/dist/L.Icon.Pulse.js"></script>
+     plugin -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #map {
+            flex: 1;
+            width: 100%;
+        }
+
+        #controls {
+            position: absolute;
+            top: 20px;
+            left: 45%;
+            transform: translateX(-38%);
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 10px;
+            background: #007BFF;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        button:active {
+            background: #0056b3;
+        }
+
+        /* QRコードスキャン画面 */
+        #qrOverlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 2000;
+        }
+
+        #video {
+            width: 80%;
+            max-width: 400px;
+            border: 5px solid white;
+            border-radius: 10px;
+        }
+
+        #closeQR {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background: red;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="controls">
+        <button onclick="zoomToCurrentLocation()">現在地ピン</button>
+        <button onclick="startQRScan()">QRコードスキャン</button>
+    </div>
+
+    <div id="map"></div>
+
+    <!-- QRコードスキャン画面 -->
+    <div id="qrOverlay">
+        <video id="video" autoplay></video>
+        <button id="closeQR" onclick="stopQRScan()">キャンセル</button>
+    </div>
+
+    <script>
+        let map = L.map('map', {
+            center: [35.1839, 137.1156], // 初期位置（愛工大）
+            zoom: 13,
+        });
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        let currentMarker = null;// 現在地のマーカーを格納
+        let isFirstPosition = true; // 最初の位置取得かどうか 
+        let shouldZoomToCurrentLocation = false; // ズームするかどうかのフラグ
+        let spots = []; // スポット情報を格納
+        let stampButton = null; // スタンプボタンの要素
+
+        // スポットの座標を取得してマップ上に表示
+        fetch('/spots')
+            .then(response => response.json())
+            .then(data => {
+                spots = data;
+                data.forEach(spot => {
+                    let icon = L.icon({
+                        iconUrl: 'static/images/stamp/img2.png',  // 画像のURL（適宜変更）
+                        iconSize: [60, 60],         // アイコンのサイズ
+                        iconAnchor: [20, 40],       // アイコンの基準点（中央にしたい場合）
+                        popupAnchor: [0, -20]       // ポップアップの位置調整
+                    });
+
+                    let marker = L.marker([spot.latitude, spot.longitude], { icon: icon }).addTo(map);
+                    //marker.bindPopup(`${spot.name}`, { autoClose: false }).openPopup();
+                });
+            });
+
+        
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(updatePosition, showError, {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                });
+            } else {
+                alert("このブラウザはGPSをサポートしていません。");
+            }
+        }
+
+        var customIcon = L.icon({
+            iconUrl: 'static/images/stamp/img.png', // ここにダウンロードした画像のパスを指定
+            iconSize: [38, 38], // アイコンのサイズ（ピクセル単位）
+            iconAnchor: [19, 38], // アイコンのアンカー位置（アイコンの中心を基準としたオフセット）
+            popupAnchor: [0, -38] // ポップアップの位置調整（ポップアップの先端を基準としたオフセット）
+        });
+
+        // var pulsingIcon2 = L.icon.pulse({
+        //     iconSize:[20,20]
+        //    ,color:'#57c6fd'
+        //    ,fillColor:'#57c6fd'
+        //    ,heartbeat: 2
+        // });
+
+        function updatePosition(position) {
+            let lat = position.coords.latitude;
+            let lng = position.coords.longitude;
+            // 初回: 新しいマーカーを作成
+
+            
+
+            if (!currentMarker) {
+                currentMarker = L.marker([lat, lng], {icon: customIcon}).addTo(map)
+                    .bindPopup("現在地",{autoClose:false}).openPopup();
+            } else {
+                // 2回目以降: マーカーの位置を更新
+                currentMarker.setLatLng([lat, lng]);
+            }
+            // 3秒ごとの位置更新時はズームしない
+            if (shouldZoomToCurrentLocation) {
+                map.setView([lat, lng], 17);
+                shouldZoomToCurrentLocation = false;
+            }
+
+            // スポットとの距離を計算してスタンプボタンを表示
+            checkSpotDistance(lat, lng);
+        }
+
+        function checkSpotDistance(lat, lng) {
+            let distanceToSpot = null;
+            let nearestSpot = null;
+
+            // 各スポットとの距離を計算
+            spots.forEach(spot => {
+                let spotLatLng = L.latLng(spot.latitude, spot.longitude);
+                let distance = spotLatLng.distanceTo([lat, lng]);
+
+                if (!distanceToSpot || distance < distanceToSpot) {
+                    distanceToSpot = distance;
+                    nearestSpot = spot;
+                }
+            });
+
+            // 最寄りのスポットとの距離が○m以内になった場合、スタンプボタンを表示
+            if (distanceToSpot <= 30) {
+                if (!stampButton) {
+                    createStampButton();
+                }
+            } else {
+                if (stampButton) {
+                    stampButton.style.display = 'none';
+                }
+            }
+        }
+
+        // スタンプボタンを作成
+        function createStampButton() {
+            stampButton = document.createElement('button');
+            stampButton.innerText = 'スタンプを押す';
+            stampButton.style.position = 'absolute';
+            stampButton.style.bottom = '20px';
+            stampButton.style.left = '50%';
+            stampButton.style.transform = 'translateX(-50%)';
+            stampButton.style.padding = '15px 30px';
+            stampButton.style.fontSize = '18px';
+            stampButton.style.border = 'none';
+            stampButton.style.borderRadius = '10px';
+            stampButton.style.backgroundColor = '#28a745';
+            stampButton.style.color = 'white';
+            stampButton.style.cursor = 'pointer';
+            stampButton.style.zIndex = '1000';
+
+            stampButton.addEventListener('click', function() {
+                alert('スタンプを押しました！');
+                // スタンプ押した後にボタン非表示
+                stampButton.style.display = 'none';
+            });
+
+            document.body.appendChild(stampButton);
+        }
+
+        // 現在地を取得し、ズーム
+        function zoomToCurrentLocation() {
+            shouldZoomToCurrentLocation = true;
+            getLocation();// 現在地取得を実行
+        }
+
+        function showError(error) {
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    alert("位置情報の取得が拒否されました。");
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    alert("位置情報が利用できません。");
+                    break;
+                case error.TIMEOUT:
+                    alert("タイムアウトしました。");
+                    break;
+                case error.UNKNOWN_ERROR:
+                    alert("不明なエラーが発生しました。");
+                    break;
+            }
+        }
+        // 3秒ごとに現在地を取得
+        setInterval(getLocation, 3000);
+
+        let videoStream = null;
+
+        function startQRScan() {
+            let overlay = document.getElementById('qrOverlay');
+            overlay.style.display = 'flex';
+
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+                .then(stream => {
+                    videoStream = stream;
+                    let video = document.getElementById('video');
+                    video.srcObject = stream;
+                    scanQRCode(video);
+                })
+                .catch(err => {
+                    alert("カメラのアクセスが拒否されました。HTTPS環境で試してください。");
+                    stopQRScan();
+                });
+        }
+
+        function scanQRCode(video) {
+            let canvas = document.createElement("canvas");
+            let context = canvas.getContext("2d");
+
+            function scan() {
+                if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    let imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                    let code = jsQR(imageData.data, imageData.width, imageData.height);
+
+                    if (code) {
+                        alert("QRコードを検出しました: " + code.data);
+                        stopQRScan();
+                        return;
+                    }
+                }
+                requestAnimationFrame(scan);
+            }
+            scan();
+        }
+
+        function stopQRScan() {
+            let overlay = document.getElementById('qrOverlay');
+            overlay.style.display = 'none';
+
+            if (videoStream) {
+                let tracks = videoStream.getTracks();
+                tracks.forEach(track => track.stop());
+            }
+        }
+
+        function navigateToSpotDetail(spot) {
+            let url = `spot_detail.html?name=${encodeURIComponent(spot.name)}&description=${encodeURIComponent(spot.description)}`;
+            // let url = info.html
+            window.location.href = url;
+        }
+
+        // スタンプを押したとき
+        stampButton.addEventListener('click', function() {
+            navigateToSpotDetail(nearestSpot);
+        });
+
+        // QRコードスキャン時の処理
+        if (code) {
+            let scannedSpot = spots.find(s => s.qrCode === code.data);
+            if (scannedSpot) {
+                navigateToSpotDetail(scannedSpot);
+            } else {
+                alert("不明なQRコードです。");
+            }
+        }
+
+
+    </script>
+</body>
+</html>
