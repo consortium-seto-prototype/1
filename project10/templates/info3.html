@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>アロハカフェ</title>
+    <link rel="stylesheet" href="/static/css/info.css">
+
+    <script>
+        function confirmLogout() {
+            return confirm("本当にログアウトしますか？");
+        }
+    </script>
+
+</head>
+<body>
+    <header>
+        <div class="aaa">
+            <img class="h_icon" src="{{ url_for('static', filename='images/AIT.jpeg') }}" alt="" width="50" height="50">
+            <h3 class="h_title">愛工大スタンプラリー</h3>
+            <a class="logout" href="{{ url_for('logout') }}" onclick="return confirmLogout()">ログアウト</a>
+        </div>
+        <nav id="g_navi">
+            <ul>
+                <li><a href="{{ url_for('stamp') }}">スタンプラリー</a></li>
+                <span class="h_line"></span>
+                <li><a href="{{ url_for('info_home') }}">施設情報</a></li>
+                <span class="h_line"></span>
+                <li><a href="{{ url_for('game') }}">カードゲーム</a></li>
+            </ul>
+          </nav>
+    </header>
+
+
+    <section>
+        <!-- <h2>大学の情報を表示する画面です。</h2> -->
+
+        <!-- <a class="next_button" href="{{ url_for('stamp') }}">スタンプラリー画面に戻る→</a> -->
+
+        {% if total_stamps < 10 %}
+            <a class="next_button" href="{{ url_for('stamp') }}">次のスタンプを取る→</a>
+        {% endif %}
+
+        {% if total_stamps == 10 %}
+            <a class="next_button" href="{{ url_for('stamp') }}">スタンプラリー画面に戻る→</a>
+        {% endif %}
+
+        <div class="title_area">
+            <h2 class="t_name">アロハカフェ</h2>
+            <div class="t_box">
+                <div class="t_line"></div>
+                <p class="t_amens">🤤食事</p>
+            </div>
+        </div>
+
+        <div class="img_area">
+            <img class="img" src="{{ url_for('static', filename='images/info/aloha.jpeg') }}" alt="">
+        </div>
+
+        <div class="text_area">
+            <!-- <p class="t_a">1号館1階に新しくオープンした「アロハカフェ」は、ハワイの雰囲気を感じながらリラックスできる空間です。
+                <br>店内では、「ロコモコプレート」「ココナッツカレー」「カルアピッグプレート」「モチコチキンプレート」など、本格的なハワイアンメニューを楽しめます。また、朝は学生向けに100円朝食も提供されているので、朝ごはんを手軽に済ませたい人にぴったり!
+                <br>一部のメニューには、本来食べられるのに廃棄されてしまう食材を活用しており、フードロス削減やSDGsにも貢献しています。</p>
+             -->
+            <p class="t_a">1号館1階に新しくオープンした「アロハカフェ」は、ハワイの雰囲気を感じながらリラックスできる空間です。</p>
+            <p class="t_a">店内では、「ロコモコプレート」「ココナッツカレー」「カルアピッグプレート」「モチコチキンプレート」など、本格的なハワイアンメニューを楽しめます。また、朝は学生向けに100円朝食も提供されているので、朝ごはんを手軽に済ませたい人にぴったり!</p>
+            <p class="t_a">一部のメニューには、本来食べられるのに廃棄されてしまう食材を活用しており、フードロス削減やSDGsにも貢献しています。</p>
+
+        </div>
+
+        <div class="info_area">
+            <div class="info_name">
+                <div class="i_line"></div>
+                <h3 class="i_textname">施設情報</h3>
+                <div class="i_line"></div>
+            </div>
+
+            <div class="infomation">
+
+                <div class="i_line2"></div>
+                <div class="i_t_area">
+                    <div class="i_title">
+                        <p class="i_text">営業時間</p>
+                    </div>
+                    <div class="i_info">
+                        <p class="i_text">授業開講日:<br>8:15 ~ 15:30</p>
+                        <p class="i_text">授業開講日以外:<br>10:00 ~ 15:30</p>
+                        <p class="i_text">（ラストオーダー15時）</p>
+                    </div>
+                </div>
+
+                <div class="i_line2"></div>
+                <div class="i_t_area">
+                    <div class="i_title">
+                        <p class="i_text">電話番号</p>
+                    </div>
+                    <div class="i_info">
+                        <p class="i_text">000-0000-0000</p>
+                    </div>
+                </div>
+
+                <div class="i_line2"></div>
+            </div>
+        </div>
+
+    </section>
+
+</body>
+</html>

@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Game</title>
+    <link rel="stylesheet" href="/static/css/template.css">
     <link rel="stylesheet" href="/static/css/game.css">
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.70.0/dist/phaser.js"></script>
+    <!-- <script src="/static/js/game.js"></script> -->
 
     <script>
         function confirmLogout() {
@@ -18,21 +21,104 @@
         <div class="aaa">
             <img class="h_icon" src="{{ url_for('static', filename='images/AIT.jpeg') }}" alt="" width="50" height="50">
             <h3 class="h_title">愛工大スタンプラリー</h3>
+            <a class="logout btn btn--orange btn--radius" href="{{ url_for('logout') }}" onclick="return confirmLogout()">ログアウト</a>
         </div>
         <nav id="g_navi">
             <ul>
-              <li><a href="{{ url_for('stamp') }}">スタンプラリー</a></li>
-              <span class="h_line"></span>
-              <li><a href="{{ url_for('info') }}">施設情報</a></li>
-              <span class="h_line"></span>
-              <li><a href="{{ url_for('logout') }}" onclick="return confirmLogout()">ログアウト</a></li>
+                <li><a href="{{ url_for('stamp') }}">スタンプラリー</a></li>
+                <span class="h_line"></span>
+                <li><a href="{{ url_for('info_home') }}">菱田研情報</a></li>
+                <span class="h_line"></span>
+                <li><a href="{{ url_for('game') }}">カードゲーム</a></li>
             </ul>
           </nav>
     </header>
 
 
     <section>
-        <h2>カードゲームの画面です。</h2>
+
+        <!-- {% if total_stamps < 10 %}
+            <h2>スタンプを10個集めてカードゲームをプレイしよう</h2>
+        {% endif %}
+
+        {% if total_stamps == 10 %}
+            <h2>→遊び方を書く</h2>
+
+            <div id="game-container"></div>
+            <script src="/static/js/game.js"></script> 
+
+        {% endif %} -->
+
+        {% if total_stamps < 4 %}
+            <h2>スタンプを4個集めてカードゲームをプレイしよう</h2>
+        {% endif %}
+
+        {% if total_stamps >= 4 %}
+            <!-- <h2>カードゲームをプレイしよう</h2> -->
+            <div class="g_area"></div>
+
+
+            <div id="game-container"></div>
+            <script src="/static/js/test.js"></script> 
+
+            <div class="g_area"></div>
+
+            <div class="title_area">
+                <h2 class="t_name">カードゲームのルール</h2>
+                <div class="t_box">
+                    <div class="t_line"></div>
+                    <!-- <p class="t_amens"></p> -->
+                </div>
+            </div>
+
+            <div class="img_area">
+                <!-- <img class="img" src="{{ url_for('static', filename='images/info/image6.png') }}" alt=""> -->
+                <img class="trump_img" src="{{ url_for('static', filename='images/trump.jpg') }}" alt="">
+            </div>
+    
+            <div class="text_area">
+                <h2>・前提条件</h2>
+                <p>使用するカードは上の画像の通りで、合計10枚。</p>
+                <p>表が赤、裏が青とし、表でカードを取った場合、描かれた数字が得点となる。裏で取った場合、全て2ptとなる。</p>
+                <p>初期盤面では、ランダムに9枚のカードが選ばれ、3 × 3で裏向きに配置される。余った1枚は表向きに配置される。</p>
+            </div>
+    
+            <div class="img_area">
+                <!-- <img class="img" src="{{ url_for('static', filename='images/info/image6.png') }}" alt=""> -->
+                <img class="trump_img" src="{{ url_for('static', filename='images/trump2.jpg') }}" alt="">
+            </div>
+    
+            <div class="text_area">
+                <h2>・ゲーム進行</h2>
+                <p>プレイヤーは交互に9枚のカードの中から1枚選択していく。選択されたカードの上下左右のカードは裏表が反転する。</p>
+                <p>表向きに配置されていたカードと同じカードを、表の状態で取得した場合、その数字分マイナスとなる。</p>
+                <p>全てのカードが選択されたらゲームは終了し、得点の高いプレイヤーの勝利となる。</p>
+                <p>例）左上のカードが選ばれた場合、下の画像のようになる。</p>
+            </div>
+    
+            <div class="img_area">
+                <!-- <img class="img" src="{{ url_for('static', filename='images/info/image6.png') }}" alt=""> -->
+                <img class="trump_img" src="{{ url_for('static', filename='images/trump3.jpg') }}" alt="">
+            </div>
+    
+            <div class="text_area">
+                <p>例）中段左のカードが選ばれた場合、下の画像のようになる。</p>
+            </div>
+    
+            <div class="img_area">
+                <!-- <img class="img" src="{{ url_for('static', filename='images/info/image6.png') }}" alt=""> -->
+                <img class="trump_img" src="{{ url_for('static', filename='images/trump4.jpg') }}" alt="">
+            </div>
+
+            <div class="space_area"></div>
+
+        {% endif %}
+
+        <!-- <div id="game-container"></div> 
+        <script src="/static/js/game.js"></script>  -->
+
+
     </section>
+
 </body>
 </html>

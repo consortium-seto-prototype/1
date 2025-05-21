@@ -10,34 +10,32 @@
     <header>
         <div class="aaa">
             <img class="h_icon" src="{{ url_for('static', filename='images/AIT.jpeg') }}" alt="" width="50" height="50">
-            <h3 class="h_title">愛工大スタンプラリー</h3>
+            <div class="aaaa">
+                <h3 class="h_title">愛工大スタンプラリー</h3>
+            </div>
+            
         </div>
-        <!-- <nav id="g_navi">
-            <ul>
-              <li><a href="{{ url_for('info') }}">施設情報</a></li>
-              <span class="h_line"></span>
-              <li><a href="{{ url_for('game') }}">カードゲーム</a></li>
-              <span class="h_line"></span>
-              <li><a href="{{ url_for('logout') }}">ログアウト</a></li>
-            </ul>
-        </nav> -->
     </header>
 
-
     <section>
-        <h2>ホーム画面です。</h2>
-
         <form class="login" method="POST">
-            <input type="text" name="name" placeholder="ユーザー名" required>
-            <input type="password" name="password" placeholder="パスワード" required>
-            <button type="submit">ログイン</button>
+            <h3>菱田研の見学へようこそ!</h3>
+            <div class="login_area">
+                <p>ユーザ名を入力してください。</p>
+                <input class="l_input" type="text" name="name" placeholder="ユーザー名" required>
+                <p>パスワードを入力してください。</p>
+                <input class="l_input" type="password" name="password" placeholder="パスワード" required>
+                <!-- <button type="submit">ログイン</button> -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% for category, message in messages %}
+                        <p class="login_mes {{ category }}">{{ message }}</p>
+                    {% endfor %}
+                {% endwith %}
+            </div>
+            <button class="login_btn" type="submit">ログイン</button>
         </form>
-        <p class="regi"><a href="{{ url_for('register') }}">新規登録はこちら</a></p>
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% for category, message in messages %}
-                <p class="{{ category }}">{{ message }}</p>
-            {% endfor %}
-        {% endwith %}
+        <p class="regi">アカウントをお持ちでない方は</p>
+        <p class="regi"><a href="{{ url_for('register') }}">新規登録をする</a></p>
     </section>
 
 </body>

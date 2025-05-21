@@ -1,0 +1,133 @@
+
+body {
+    margin: 0;
+    background-color: rgb(255, 245, 230);
+    font-family: "Helvetica", "ヒラギノ丸ゴ ProN";
+}
+
+/* -------------↓ ヘッダー部分（全画面共通）↓------------- */
+header {
+    position: sticky;
+    top: 0;
+    /* background-color: rgb(255, 245, 230, 0.9); */
+    /* background-color: rgba(233, 186, 116, 0.9); */
+    background-color: rgba(74, 94, 247, 0.9);
+
+}
+
+.aaa {
+    /* display: flex; */
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+}
+
+.h_icon {
+    float: left;
+    margin-left: 5px;
+    border-radius: 20px;
+}
+
+.h_title {
+    padding-left: 10px;
+}
+
+.hb {
+    display: block;
+    margin: 0 auto;
+}   
+
+#g_navi ul {
+    display: flex;
+    margin: 0 auto;
+    padding: 0 3%;
+    width: 94%;
+    max-width: 960px; 
+    /* height: 25px; */
+}
+
+#g_navi li {
+    list-style: none;
+    font-weight: bold;
+}
+    
+#g_navi ul li {
+  flex: 1 0 auto;
+}
+      
+#g_navi ul li a {
+    display: block;
+    padding: 1px 10px;
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+}
+  
+.h_line {
+    /* background-color: rgb(90, 72, 72); */
+    background-color: rgb(160, 222, 252);
+    width: 1px;
+    height: 20px;
+    margin-top: 3px;
+}
+
+.logout {
+    color: #c7c4c4;
+    margin-right: 5px;
+}
+/* -------------↑ ヘッダー部分（全画面共通）↑------------- */
+
+.section {
+    padding: 5px 15px;
+    height: 150vh;
+}
+
+/* * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+} */
+
+body {
+    /* font-family: Arial, sans-serif; */
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
+
+#map {
+    flex: 1;
+    width: 100%;
+}
+
+#controls {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 10px;
+    background: #007BFF;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+button:active {
+    background: #0056b3;
+}
+
+.g_button {
+    margin-top: 90px;
+}
+
+.kan {
+    margin-top: 10px;
+}

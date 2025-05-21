@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Home2</title>
+    <link rel="stylesheet" href="/static/css/home.css">
+</head>
+<body>
+    <header>
+        <div class="aaa">
+            <img class="h_icon" src="{{ url_for('static', filename='images/AIT.jpeg') }}" alt="" width="50" height="50">
+            <div class="aaaa">
+                <h3 class="h_title">愛工大スタンプラリー</h3>
+            </div>
+            
+        </div>
+    </header>
+
+    <section>
+        <form class="login" method="POST">
+            <h3>再度、ログインしてください</h3>
+            <div class="login_area">
+                <p>ユーザ名を入力してください。</p>
+                <input class="l_input" type="text" name="name" placeholder="ユーザー名" required>
+                <p>パスワードを入力してください。</p>
+                <input class="l_input" type="password" name="password" placeholder="パスワード" required>
+
+                <!-- QRで読み取ったスタンプの番号を保持 -->
+                <input type="hidden" name="stp_num" value="{{ stp_num }}">
+                
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% for category, message in messages %}
+                        <p class="login_mes {{ category }}">{{ message }}</p>
+                    {% endfor %}
+                {% endwith %}
+            </div>
+            <button class="login_btn" type="submit">ログイン</button>
+        </form>
+        <!-- <p class="regi">アカウントをお持ちでない方は</p>
+        <p class="regi"><a href="{{ url_for('register') }}">新規登録をする</a></p> -->
+    </section>
+
+</body>
+</html>

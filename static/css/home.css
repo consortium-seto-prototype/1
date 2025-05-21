@@ -2,6 +2,7 @@
 body {
     margin: 0;
     background-color: rgb(255, 245, 230);
+    font-family: "Helvetica", "ヒラギノ丸ゴ ProN";
 }
 
 /* -------------↓ ヘッダー部分（全画面共通）↓------------- */
@@ -9,21 +10,35 @@ header {
     position: sticky;
     top: 0;
     /* background-color: rgb(255, 245, 230, 0.9); */
-    background-color: rgba(233, 186, 116, 0.9);
+    /* background-color: rgba(233, 186, 116, 0.9); */
+    /* background-color: rgba(74, 94, 247, 0.9); */
+    background-color: rgba(44, 186, 146, 0.9);
+
+    color: #fff;
+    /* font-size: large; */
 }
 
 .aaa {
-    display: flex;
+    /* display: flex; */
     align-items: center;
+    display: flex;
+    /* justify-content: space-between; */
 }
 
 .h_icon {
     float: left;
     margin-left: 5px;
+    border-radius: 20px;
+}
+
+.aaaa {
+    /* text-align: center; */
+    width: 100%;
 }
 
 .h_title {
     padding-left: 10px;
+    text-align: center;
 }
 
 .hb {
@@ -58,23 +73,73 @@ header {
 }
   
 .h_line {
-    background-color: rgb(90, 72, 72);
+    /* background-color: rgb(90, 72, 72); */
+    background-color: rgb(160, 222, 252);
     width: 1px;
     height: 20px;
     margin-top: 3px;
 }
 
+.logout {
+    color: #c7c4c4;
+    margin-right: 5px;
+}
+
 /* -------------↑ ヘッダー部分（全画面共通）↑------------- */
 
+/* ログイン画面と登録画面 */
 section {
     padding: 5px 15px;
-    height: 150vh;
+    /* height: 150vh; */
 }
 
 .login {
+    /* background-color: red; */
+    max-width: 450px;
+    margin: 0 auto;
+    /* text-align: center; */
+    margin-top: 20px;
+    /* padding-left: 30px; */
+    /* border: 2px solid brown; */
+    border: 2px solid #444141;
+    border-radius: 50px;
+    /* height: 200px; */
+    /* width: 90%; */
+}
+
+h3{
     text-align: center;
+}
+
+.login_area {
+    padding-left: 20px; 
+}
+
+.l_input {
+    height: 30px;
+    width: 70%
+}
+
+.login_btn {
+    display: block;
+    margin: auto;
+    border: #fff;
+    border-radius: 50px;
+    height: 40px;
+    width: 120px;
+    font-size: larger;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background-color: rgb(95, 112, 239);
+    color: white;
+}
+
+.login_mes {
+    font-size: larger;
+    /* color: red; */
 }
 
 .regi {
     text-align: center;
+    color: black;
 }

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>QRcode</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="/static/css/template.css">
+    <link rel="stylesheet" href="/static/css/test2.css">
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
+    <!-- QRコードのライブラリ -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <script>
+        function confirmLogout() {
+            return confirm("本当にログアウトしますか？");
+        }
+
+        // 一定スクロール時ヘッダー消える
+        $(function() {
+	        var headerHeight = $('header').outerHeight(),
+		        startPos = 0;
+	        $(window).on('load scroll', function() {
+                var scrollPos = $(this).scrollTop();
+                // if ( scrollPos > startPos && scrollPos > headerHeight ) {
+                if ( scrollPos > startPos) {
+                    $('header').css('top', '-' + headerHeight + 'px');
+                } else {
+                    $('header').css('top', '0');
+                }
+                startPos = scrollPos;
+            });
+        });	
+    </script>
+
+
+    <style>
+        /* 画像アップロード用ボタンを非表示にする */
+        .html5-qrcode-anchor-scan-type-change {
+            display: none !important;
+        }
+
+        .html5-qrcode-input-file {
+            display: none !important;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="aaa">
+            <img class="h_icon" src="{{ url_for('static', filename='images/AIT.jpeg') }}" alt="" width="50" height="50">
+            <h3 class="h_title">愛工大スタンプラリー</h3>
+            <a class="logout btn btn--orange btn--radius" href="{{ url_for('logout') }}" onclick="return confirmLogout()">ログアウト</a>
+        </div>
+        <nav id="g_navi">
+            <ul>
+                <li><a href="{{ url_for('test2') }}">スタンプラリー</a></li>
+                <span class="h_line"></span>
+                <li><a href="{{ url_for('info_home') }}">菱田研情報</a></li>
+                <span class="h_line"></span>
+                <li><a href="{{ url_for('game') }}">カードゲーム</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section>
+        <h2>ようこそ! 菱田研へ</h2>
+        <div class="qr" id="reader" style="width:350px;"></div>
+        <!-- <p>このサイトでは、菱田研を楽しく知ってもらうためのスタンプラリーを開催しています!<br>
+            研究室内に設置されたQRコードを探して読み取り、スタンプを集めていきましょう。</p>
+        <p>すべてのスタンプを集めると、菱田先生考案のオリジナルミニゲームやちょっとした特典も…？<br>
+            ぜひ、研究室を巡りながら私たちの活動や雰囲気を体験してみてください！</p> -->
+
+        <p>このサイトでは、菱田研を楽しく知ってもらうためのスタンプラリーを開催しています!</p>
+        <p>研究室内に設置されたQRコードを探して、スマホのカメラかWebサイト上のカメラで読み取り、スタンプを集めていきましょう。</p>
+        <p>すべてのスタンプを集めると、菱田先生考案のオリジナルカードゲームやちょっとした特典も…？<br>
+            ぜひ、研究室を巡りながら私たちの活動や雰囲気を体験してみてください！</p>
+    </section>
+
+    <script>
+        function onScanSuccess(decodedText, decodedResult) {
+        console.log(`読み取った内容: ${decodedText}`);
+        // URLとして読み取った場合、自動的に遷移させる
+        if (decodedText.startsWith("http://") || decodedText.startsWith("https://")) {
+            window.location.href = decodedText;
+        } else {
+            alert("QRコードの内容: " + decodedText);
+        }
+        // 読み取りを停止
+        html5QrcodeScanner.clear();
+        }
+
+        function onScanError(errorMessage) {
+        // エラー時もしくは読み取れなかったときに実行（毎回は表示しない方が良い）
+        // console.warn(`読み取りエラー: ${errorMessage}`);
+        }
+
+        const html5QrcodeScanner = new Html5QrcodeScanner(
+        "reader", 
+        { fps: 1, qrbox: 300, showUploadButton: false, zoom: true}, 
+        /* verbose= */ false);
+        html5QrcodeScanner.render(onScanSuccess, onScanError);
+    </script>
+</body>
+</html>
