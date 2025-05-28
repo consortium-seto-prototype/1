@@ -25,10 +25,10 @@ def load_user(user_id):
 
 def set_spots():
     spots = [
-        {"name": "AITプラザ", "order_number": 1, "lat": 35.198600, "lng": 137.093998},
-        {"name": "愛和食堂", "order_number": 2, "lat": 35.184473, "lng": 137.110925},
-        {"name": "キャリアセンター", "order_number": 3, "lat": 35.184473, "lng": 137.110925},
-        {"name": "14号館", "order_number": 4, "lat": 35.184473, "lng": 137.110925},
+        {"name": "14号館", "order_number": 1, "lat": 35.184473, "lng": 137.110925},
+        {"name": "1号館", "order_number": 2, "lat": 35.183932, "lng": 137.1115},
+        {"name": "AITプラザ", "order_number": 3, "lat": 35.18421, "lng": 137.11190},
+        {"name": "愛和会館", "order_number": 4, "lat": 35.18422, "lng": 137.1123},
     ]
 
     # Spot に同じ名前のスポットがなければ追加（重複防止）
@@ -547,42 +547,18 @@ def test_get_stamp4():
 @app.route('/spots')
 def get_spots():
     spots = [
-        # {"name": "セブン", "latitude": 35.18421, "longitude": 137.11190, "radius": 20},
         {"name": "14号館", "latitude": 35.184473, "longitude": 137.110925, "radius": 20},
-        # {"name": "愛工大", "latitude": 35.1835, "longitude": 137.1130, "radius": 50},
-        # {"name": "浅草寺", "latitude": 35.7148, "longitude": 139.7967, "radius": 400},
         # {"name": "テスト用", "latitude": 35.198600, "longitude": 137.093998, "radius": 30}
-
-        # {"name": "AITプラザ", "order_number": 1, "lat": 35.198600, "lng": 137.093998},
-        # {"name": "愛和食堂", "order_number": 2, "lat": 35.184473, "lng": 137.110925},
-        # {"name": "キャリアセンター", "order_number": 3, "lat": 35.184473, "lng": 137.110925},
-        # {"name": "14号館", "order_number": 4, "lat": 35.184473, "lng": 137.110925},
     ]
 
-    # Spot に同じ名前のスポットがなければ追加（重複防止）
-    # for s in spots:
-    #     existing = Spot.query.filter_by(name=s['name']).first()
-    #     if not existing:
-    #         new_spot = Spot(
-    #             name=s['name'],
-    #             order_number=s['order_number'],
-    #             lat=s['lat'],
-    #             lng=s['lng'],
-    #         )
-    #         db.session.add(new_spot)
-    # db.session.commit()
+    # order_number = 1 のスポットをDBから取得して返す
+    spot = Spot.query.filter_by(order_number=1).first()
+    if not spot:
+        return jsonify({"error": "order_number=1 のスポットが見つかりません"}), 404
 
-    # # order_number = 1 のスポットをDBから取得して返す
-    # spot = Spot.query.filter_by(order_number=1).first()
-    # if not spot:
-    #     return jsonify({"error": "order_number=1 のスポットが見つかりません"}), 404
-
-    # response = {
-    #     "name": spot.name,
-    #     "latitude": spot.lat,
-    #     "longitude": spot.lng,
-    #     "radius": 30  # 半径の設定はお好みで
-    # }
+    response = [
+        {"name": spot.name, "latitude": spot.lat, "longitude": spot.lng, "radius": 20},
+    ]
 
     # return jsonify(response)
     return jsonify(spots)
@@ -590,28 +566,58 @@ def get_spots():
 @app.route('/spots2')
 def get_spots2():
     spots = [
-        # {"name": "アロハカフェ", "latitude": 35.183932, "longitude": 137.1115, "radius": 20},
-        {"name": "14号館", "latitude": 35.184473, "longitude": 137.110925, "radius": 20},
+        {"name": "1号館", "latitude": 35.18396926545825, "longitude": 137.11122104999848, "radius": 20},
+        # {"name": "14号館", "latitude": 35.184473, "longitude": 137.110925, "radius": 20},
         # {"name": "テスト用", "latitude": 35.198600, "longitude": 137.093998, "radius": 30}
     ]
+
+    spot = Spot.query.filter_by(order_number=2).first()
+    if not spot:
+        return jsonify({"error": "order_number=2 のスポットが見つかりません"}), 404
+
+    response = [
+        {"name": spot.name, "latitude": spot.lat, "longitude": spot.lng, "radius": 20},
+    ]
+
+    # return jsonify(response)
     return jsonify(spots)
 
 @app.route('/spots3')
 def get_spots3():
     spots = [
-        # {"name": "セブンイレブン", "latitude": 35.18421, "longitude": 137.11190, "radius": 20},
-        {"name": "14号館", "latitude": 35.184473, "longitude": 137.110925, "radius": 20},
+        {"name": "セブンイレブン", "latitude": 35.18421, "longitude": 137.11190, "radius": 20},
+        # {"name": "14号館", "latitude": 35.184473, "longitude": 137.110925, "radius": 20},
         # {"name": "テスト用", "latitude": 35.198600, "longitude": 137.093998, "radius": 30}
     ]
+
+    spot = Spot.query.filter_by(order_number=3).first()
+    if not spot:
+        return jsonify({"error": "order_number=3 のスポットが見つかりません"}), 404
+
+    response = [
+        {"name": spot.name, "latitude": spot.lat, "longitude": spot.lng, "radius": 20},
+    ]
+    
+    # return jsonify(response)
     return jsonify(spots)
 
 @app.route('/spots4')
 def get_spots4():
     spots = [
-        # {"name": "愛和食堂", "latitude": 35.18422, "longitude": 137.1123, "radius": 20},
-        {"name": "14号館", "latitude": 35.184473, "longitude": 137.110925, "radius": 20},
+        {"name": "愛和会館", "latitude": 35.18422, "longitude": 137.1123, "radius": 20},
+        # {"name": "14号館", "latitude": 35.184473, "longitude": 137.110925, "radius": 20},
         # {"name": "テスト用", "latitude": 35.198600, "longitude": 137.093998, "radius": 30}
     ]
+
+    spot = Spot.query.filter_by(order_number=4).first()
+    if not spot:
+        return jsonify({"error": "order_number=4 のスポットが見つかりません"}), 404
+
+    response = [
+        {"name": spot.name, "latitude": spot.lat, "longitude": spot.lng, "radius": 20},
+    ]
+    
+    # return jsonify(response)
     return jsonify(spots)
 
 @app.route('/test_spots')
