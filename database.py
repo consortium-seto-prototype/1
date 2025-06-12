@@ -16,7 +16,7 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(150), unique=True, nullable=True)
     password = db.Column(db.String(200), nullable=True)
-    line_id = db.Column(db.String(50), unique=True, nullable=True)  #LINE ID
+    line_id = db.Column(db.String(50), unique=True, nullable=True)  #LINE ID（nullableは後でfalseに変更する）
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     # パスワードをハッシュ化
