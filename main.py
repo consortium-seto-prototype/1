@@ -585,7 +585,7 @@ def test_get_stamp4():
 @app.route('/spots')
 def get_spots():
     spots = [
-        {"name": "14号館", "latitude": 35.184473, "longitude": 137.110925, "radius": 20},
+        {"name": "14号館", "latitude": 35.184473, "longitude": 137.110925, "radius": 20, "image_url": "/static/images/info/14号館.webp"},
         # {"name": "テスト用", "latitude": 35.198600, "longitude": 137.093998, "radius": 30}
     ]
 
@@ -605,7 +605,7 @@ def get_spots():
 def get_spots2():
     spots = [
         # {"name": "キャリアセンター", "latitude": 35.18396926545825, "longitude": 137.11122104999848, "radius": 20},
-        {"name": "14号館", "latitude": 35.184473, "longitude": 137.110925, "radius": 20},
+        {"name": "14号館", "latitude": 35.184473, "longitude": 137.110925, "radius": 20, "image_url": "/static/images/info/career.webp"},
         # {"name": "テスト用", "latitude": 35.198600, "longitude": 137.093998, "radius": 30}
     ]
 
@@ -624,7 +624,7 @@ def get_spots2():
 def get_spots3():
     spots = [
         # {"name": "AITプラザ", "latitude": 35.18421, "longitude": 137.11190, "radius": 20},
-        {"name": "14号館", "latitude": 35.184473, "longitude": 137.110925, "radius": 20},
+        {"name": "14号館", "latitude": 35.184473, "longitude": 137.110925, "radius": 20, "image_url": "/static/images/info/aitp.jpg"},
         # {"name": "テスト用", "latitude": 35.198600, "longitude": 137.093998, "radius": 30}
     ]
 
@@ -643,7 +643,7 @@ def get_spots3():
 def get_spots4():
     spots = [
         # {"name": "愛和会館", "latitude": 35.18422, "longitude": 137.1123, "radius": 20},
-        {"name": "14号館", "latitude": 35.184473, "longitude": 137.110925, "radius": 20},
+        {"name": "14号館", "latitude": 35.184473, "longitude": 137.110925, "radius": 20, "image_url": "/static/images/info/aiwa.webp"},
         # {"name": "テスト用", "latitude": 35.198600, "longitude": 137.093998, "radius": 30}
     ]
 
