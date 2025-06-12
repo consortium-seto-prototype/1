@@ -3,29 +3,30 @@ from flask_sqlalchemy import SQLAlchemy
 import csv
 import zipfile
 import io
-
-from datetime import datetime
-zip_filename = f"db_{datetime.now().strftime('%Y%m%d_%H%M%S')}.zip"
-
 import os
-home_dir = os.path.expanduser('~')
-desktop_path = os.path.join(home_dir, 'Desktop')
-save_path = os.path.join(desktop_path, zip_filename)
-
-# モデルをインポート
-from database import db, User, Stamp
+from datetime import datetime
+from database import db, User, Spot, Stamp, StampRecord
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydb.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
-def tables_to_zip():
+def db_to_csv():
     with app.app_context():
+        now = datetime.now().strftime('%Y%m%d_%H%M%S')
+        zip_filename = f"db_{now}.zip"
+
+        home_dir = os.path.expanduser('~')
+        desktop_path = os.path.join(home_dir, 'Desktop')
+        save_path = os.path.join(desktop_path, zip_filename)
+
         # 各テーブルごとにcsvを作成
         tables = {
             'users.csv': User,
-            'stamps.csv': Stamp
+            'stamps.csv': Stamp,
+            'stamprecode.csv': StampRecord,
+            'spot.csv': Spot
         }
 
         memory_zip = io.BytesIO()
@@ -52,5 +53,5 @@ def tables_to_zip():
         # print(f" {zip_filename} を作成しました。")
         print(f" {save_path} に保存しました。")
 
-if __name__ == '__main__':
-    tables_to_zip()
+# if __name__ == '__main__':
+#     db_to_csv()
