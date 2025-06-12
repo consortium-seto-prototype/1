@@ -50,13 +50,6 @@
             return confirm("本当にログアウトしますか？");
         }
 
-        const map = L.map('map').setView([35.18421, 137.11190], 17); //初期位置
-
-        //地図絵タイル
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 18.5,
-        }).addTo(map);
-
         let currentMarker = null;// 現在地のマーカーを格納
         let isFirstPosition = true; // 最初の位置取得かどうか 
         let shouldZoomToCurrentLocation = false; // ズームするかどうかのフラグ
@@ -71,6 +64,32 @@
 
         //連続アラートを防ぐ
         let isErrorDisplayed = false;
+
+        //地図絵タイル(デフォルト)
+        const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19
+        });
+
+        //航空写真
+        const esri = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri',
+            maxZoom: 19
+        });
+        
+        //初期位置
+        const map = L.map('map', {
+            center: [35.18421, 137.11190],
+            zoom: 17,
+            layers: [osm] // 初期表示レイヤー
+        });
+
+        const baseMaps = {
+            "デフォルト": osm,
+            "航空写真": esri
+        };
+
+        L.control.layers(baseMaps).addTo(map);
+
 
         // スポットの座標を取得してマップ上に表示
         fetch('/spots')
@@ -139,13 +158,13 @@
             }
 
             if (shouldZoomToCurrentLocation || keepCenter) {
-                map.setView([lat, lng], 18); // 現在地ピンを画面中心にする
+                map.setView([lat, lng], 19); // 現在地ピンを画面中心にする
                 shouldZoomToCurrentLocation = false;
             }
 
             // ○秒ごとの位置更新時はズームしない
             if (shouldZoomToCurrentLocation) {
-                map.setView([lat, lng], 18); //現在地ピンボタンを押した時にズーム
+                map.setView([lat, lng], 19); //現在地ピンボタンを押した時にズーム
                 shouldZoomToCurrentLocation = false;
             }
 
