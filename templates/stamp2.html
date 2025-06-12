@@ -106,6 +106,13 @@
 
                     let marker = L.marker([spot.latitude, spot.longitude], { icon: icon }).addTo(map);
                     //marker.bindPopup(`${spot.name}`, { autoClose: false }).openPopup();
+                    //スポットのポップアップに画像表示
+                    marker.bindPopup(`
+                        <div style="text-align:center;">
+                            <img src="${spot.image_url}" alt="${spot.name}" style="width:200px;height:auto;border-radius:8px;margin-bottom:5px;"><br>
+                            <strong>${spot.name}</strong>
+                        </div>
+                    `, { autoClose: false });
                 });
             });
 
