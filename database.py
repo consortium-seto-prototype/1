@@ -14,8 +14,9 @@ class User(db.Model, UserMixin):
     __tablename__ = 'user'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(150), unique=True, nullable=False)
-    password = db.Column(db.String(200), nullable=False)
+    name = db.Column(db.String(150), unique=True, nullable=True)
+    password = db.Column(db.String(200), nullable=True)
+    line_id = db.Column(db.String(50), unique=True, nullable=True)  #LINE ID
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     # パスワードをハッシュ化
@@ -25,6 +26,17 @@ class User(db.Model, UserMixin):
     # 入力されたパスワードが登録されているパスワードハッシュと一致するかを確認
     def check_password(self, password):
         return check_password_hash(self.password, password)
+
+    @classmethod
+    def find_by_line_id(cls, line_id):
+        return cls.query.filter_by(line_id=line_id).first()
+
+    @classmethod
+    def create_from_line_login(cls, line_id, name):
+        user = cls(line_id=line_id, name=name)
+        db.session.add(user)
+        db.session.commit()
+        return user
 
 # # スポットテーブル
 class Spot(db.Model):

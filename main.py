@@ -1,8 +1,13 @@
 from flask import Flask, request, render_template, redirect, url_for, flash, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
-# from database import db, User, Stamp
 from database import db, User, Spot, Stamp, StampRecord
+
+import threading
+import schedule
+import time
+# バックアップ関数のインポート
+from db_to_csv import db_to_csv 
 
 app = Flask(__name__)
 app.secret_key = 'secret_key'
@@ -23,6 +28,37 @@ login_manager.login_message = "※ ログインが必要です。ログインし
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+
+# -------------------------------------dbバックアップ用の処理-------------------------------------
+
+# スケジューラを動かす関数
+def run_scheduler():
+    # スケジュール間10秒（テスト用）
+    # schedule.every(10).seconds.do(db_to_csv)
+    # スケジュール間1時間（本番）
+    schedule.every().hour.do(db_to_csv)
+
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+
+# アプリ起動時にスケジューラをスタート
+# def start_scheduler_once():
+#     global scheduler_started
+#     if not scheduler_started:
+#         thread = threading.Thread(target=run_scheduler)
+#         thread.daemon = True
+#         thread.start()
+#         scheduler_started = True
+
+# @app.before_first_request（Flask3.0で廃止）
+# def activate_scheduler():
+#     thread = threading.Thread(target=run_scheduler)
+#     thread.daemon = True  # Flaskが終了したら自動で終了
+#     thread.start()
+
+
+# ---------------------------------初回実行時のみスタンプラリーのスポット情報をデータベースに追加---------------------------------
 def set_spots():
     spots = [
         {"name": "14号館", "order_number": 1, "lat": 35.184473, "lng": 137.110925},
@@ -77,13 +113,14 @@ def save_stamp(stamp_num):
             setattr(stamp, f"stamp_{stamp_num}", True)
             db.session.add(stamp)
             # print("1つ目のスタンプを取得しました。")
+            # print("ユーザ名:", current_user.name)
             print(f"{stamp_num}番目のスタンプを取得しました。")
 
         else:
             if stamp.stamp_count < 4:
                 stamp.stamp_count += 1  # スタンプを1つ増やす
                 setattr(stamp, f"stamp_{stamp_num}", True)
-                # print("スタンプを取得しました。")
+                # print("ユーザ名:", current_user.name)
                 print(f"{stamp_num}番目のスタンプを取得しました。")
             else:
                 print("スタンプは4個までです。")
@@ -204,7 +241,7 @@ def stamp():
     # ユーザーのスタンプ情報を取得（なければデフォルト0）
     stamp = Stamp.query.filter_by(user_id=current_user.id).first()
     total_stamps = stamp.stamp_count if stamp else 0
-    print("スタンプの合計:", total_stamps)
+    print("ユーザ名:", current_user.name, ", スタンプの合計:", total_stamps)
     info = ["", "2", "3", "4", "", "2", "3", "4", "", "2"] 
 
     # それぞれのスタンプの取得状況を変数に代入
@@ -238,16 +275,17 @@ def get_stamp():
     # ユーザーのスタンプ情報を取得（なければデフォルト0）
     stamp = Stamp.query.filter_by(user_id=current_user.id).first()
     total_stamps = stamp.stamp_count if stamp else 0
+    print("ユーザ名:", current_user.name)
 
     if request.method == 'POST':
         data = request.get_json()
         stp_num = data.get('stp_num')
         lat = data.get('latitude')
         lng = data.get('longitude')
-        print("スタンプ番号：", stp_num, "緯度：", lat, "経度：", lng)        
+        # print("スタンプ番号：", stp_num, "緯度：", lat, "経度：", lng)        
 
         get_stamp = save_stamp(stp_num)
-        print("取得したスタンプ：", get_stamp)
+        # print("取得したスタンプ：", get_stamp)
 
         # 行動データの保存
         spot = Spot.query.filter_by(order_number=stp_num).first()
@@ -566,8 +604,8 @@ def get_spots():
 @app.route('/spots2')
 def get_spots2():
     spots = [
-        {"name": "1号館", "latitude": 35.18396926545825, "longitude": 137.11122104999848, "radius": 20},
-        # {"name": "14号館", "latitude": 35.184473, "longitude": 137.110925, "radius": 20},
+        # {"name": "キャリアセンター", "latitude": 35.18396926545825, "longitude": 137.11122104999848, "radius": 20},
+        {"name": "14号館", "latitude": 35.184473, "longitude": 137.110925, "radius": 20},
         # {"name": "テスト用", "latitude": 35.198600, "longitude": 137.093998, "radius": 30}
     ]
 
@@ -585,8 +623,8 @@ def get_spots2():
 @app.route('/spots3')
 def get_spots3():
     spots = [
-        {"name": "セブンイレブン", "latitude": 35.18421, "longitude": 137.11190, "radius": 20},
-        # {"name": "14号館", "latitude": 35.184473, "longitude": 137.110925, "radius": 20},
+        # {"name": "AITプラザ", "latitude": 35.18421, "longitude": 137.11190, "radius": 20},
+        {"name": "14号館", "latitude": 35.184473, "longitude": 137.110925, "radius": 20},
         # {"name": "テスト用", "latitude": 35.198600, "longitude": 137.093998, "radius": 30}
     ]
 
@@ -604,8 +642,8 @@ def get_spots3():
 @app.route('/spots4')
 def get_spots4():
     spots = [
-        {"name": "愛和会館", "latitude": 35.18422, "longitude": 137.1123, "radius": 20},
-        # {"name": "14号館", "latitude": 35.184473, "longitude": 137.110925, "radius": 20},
+        # {"name": "愛和会館", "latitude": 35.18422, "longitude": 137.1123, "radius": 20},
+        {"name": "14号館", "latitude": 35.184473, "longitude": 137.110925, "radius": 20},
         # {"name": "テスト用", "latitude": 35.198600, "longitude": 137.093998, "radius": 30}
     ]
 
@@ -633,4 +671,16 @@ def get_test_spots():
 
 
 if __name__ == '__main__':
+    import os
+    # Flaskのリローダーが起動したときだけスケジューラをスタート（dbバックアップ用の処理）
+    if os.environ.get('WERKZEUG_RUN_MAIN') == 'true':
+        thread = threading.Thread(target=run_scheduler)
+        thread.daemon = True
+        thread.start()
+
+    # # Flask起動前にスケジューラをスタート（dbバックアップ用の処理）
+    # thread = threading.Thread(target=run_scheduler)
+    # thread.daemon = True
+    # thread.start()
+
     app.run(debug=True, host='0.0.0.0', port=8000)
