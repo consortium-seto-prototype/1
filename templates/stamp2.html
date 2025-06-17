@@ -210,9 +210,12 @@
             });
 
             // 最寄りのスポットとの距離が○m以内になった場合、スタンプボタンを表示
-            if (distanceToSpot <= 30) {
+            if (distanceToSpot <= 15) {
                 if (!stampButton) {
                     createStampButton();
+                }else{
+                    //既に存在する場合は表示する
+                    stampButton.style.display = 'block';
                 }
             } else {
                 if (stampButton) {
