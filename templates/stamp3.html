@@ -213,6 +213,9 @@
             if (distanceToSpot <= 30) {
                 if (!stampButton) {
                     createStampButton();
+                }else{
+                    //既に存在する場合は表示する
+                    stampButton.style.display = 'block';
                 }
             } else {
                 if (stampButton) {
